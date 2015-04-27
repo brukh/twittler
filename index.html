@@ -1,25 +1,52 @@
 <!DOCTYPE html>
 <html>
   <head>
+  	<link rel="stylesheet" type="text/css" href="css/skeleton.css">
+  	<link rel="stylesheet" type="text/css" href="css/normalize.css">
     <script src="jquery.js"></script>
     <script src="data_generator.js"></script>
+    <script src="moment.js"></script>
   </head>
-  <body>
+  <body class="container">
     <script>
+
+      var clearTweets = function() {
+      	$('body').html('');
+      };
 
       $(document).ready(function(){
         var $body = $('body');
         $body.html('');
 
         var index = streams.home.length - 1;
-        while(index >= 0){
+
+        //tweet generator 
+         setInterval(function(){
           var tweet = streams.home[index];
-          var $tweet = $('<div></div>');
-          $tweet.text('@' + tweet.user + ': ' + tweet.message);
+          var $tweet = $('<div ></div>', {id: tweet.user});
+          var $user = $('<a/>', {
+			          html: '@' + tweet.user + ': ',
+			          id: tweet.user,
+			          "class": "user_link",
+			          href: "#"
+			          }); 
+		  var $message = $('<p> </p>');
+		  $message.text(tweet.message + ' ' + moment().format('h:mm a'));  //adds timestamp to tweet          
+          //$tweet.text(tweet.message + ' ' + moment().format('h:mm a'));
+          $message.prependTo($tweet);
+          $user.prependTo($tweet);
           $tweet.appendTo($body);
           index -= 1;
-        }
+          if (index === 0) {
+          	clearInterval();
+          }
+         }, 1500);
 
+         //displays tweets from only that user when username is clicked -- goes back to timeline when clicked again
+         $(document).on("click", "a", function(event){
+    		user_name = $(this).attr("id");
+    		$("div").not("#"+user_name).toggle();
+		 });      
       });
 
     </script>
